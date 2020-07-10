@@ -6,9 +6,9 @@ use PDO;
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'ToolkitServiceSet.php';
 include_once __DIR__ . DIRECTORY_SEPARATOR . 'ToolkitService.php';
 
-if (!defined('CONFIG_FILE')) {
-    define('CONFIG_FILE', 'toolkit.ini');
-}
+//if (!defined('CONFIG_FILE')) {
+//    define('CONFIG_FILE', 'toolkit.ini');
+//}
 
 
 /**
@@ -18,7 +18,8 @@ if (!defined('CONFIG_FILE')) {
  */
 class Toolkit implements ToolkitInterface
 {
-    const VERSION =  "1.8.3"; // version number for front-end PHP toolkit
+    const VERSION =  "1.8.4"; // version number for front-end PHP toolkit
+    const CONFIG_FILE = 'toolkit.ini';
 
     /* @todo use inputXml and outputXml to make this class more flexibly OO-like. Fewer strings copied around.
      * Better would be to use a Request object that has a connection.
@@ -831,10 +832,10 @@ class Toolkit implements ToolkitInterface
 
             $result = $transport->send($inputXml, $outByteSize);
 
-            // workaround: XMLSERVICE as of 1.7.4 returns a single space instead of empty string when no content was requested.
-            if ($result == ' ') {
-                $result = '';
-            }
+//            // workaround: XMLSERVICE as of 1.7.4 returns a single space instead of empty string when no content was requested.
+//            if ($result == ' ') {
+//                $result = '';
+//            }
         }
 
         if ($this->isDebug() && $result) {
@@ -843,7 +844,7 @@ class Toolkit implements ToolkitInterface
             $this->debugLog("Output XML: $result\nExec end: " . date("Y-m-d H:i:s") . ". Seconds to execute: $elapsed.\n\n");
         }
 
-        return $result;
+        return trim($result);
     }
 
     /**
@@ -2392,7 +2393,7 @@ class Toolkit implements ToolkitInterface
         // if we haven't read config file yet, do so.
         if (!isset(self::$_config)) {
             // read/stat INI once and only once per request
-            self::$_config = parse_ini_file(CONFIG_FILE, true);
+            self::$_config = parse_ini_file(self::CONFIG_FILE, true);
         }
 
         if (isset(self::$_config[$heading][$key])) {
